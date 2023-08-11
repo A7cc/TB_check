@@ -9,10 +9,8 @@
 
 
 
-创建一个文件夹：`TB`，新建四个文件：`main.go`、`TBcheck.go`、`TBfun.go`、`TBtype.go`，在`TB`文件夹打开cmd，运行`go build .`，即可生成文件。该工具没有设置并发数。。。
+创建一个文件夹：`TB`，新建四个文件：`main.go`、`check.go`、`function.go`、`type.go`，在`TB_check`文件夹打开`cmd`，运行`go build .`，即可生成文件。该工具没有设置并发数。。。
 
 # 贰 使用
 
-![image-20221202164208051](images/image-20221202164208051.png)
-
-![image-20221202164246937](images/image-20221202164246937.png)
+![image-20230811192005995](image-20230811192005995.png)
