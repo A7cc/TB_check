@@ -5,12 +5,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"os"
 )
 
-func Check_IP(IP, apikey string) {
-	// 关闭goroutine
-	defer wg.Done()
+func Check_IP(IP, apikey string) error {
 	// 严重级别
 	severity := map[string]string{"critical": "严重", "high": "高", "medium": "中", "low": "低", "info": "无危胁"}
 	// 可信度
@@ -22,25 +19,31 @@ func Check_IP(IP, apikey string) {
 
 	// 请求微步的API接口
 	url := fmt.Sprintf("https://api.threatbook.cn/v3/scene/ip_reputation?apikey=%v&resource=%v", apikey, IP)
-	req, err1 := http.NewRequest("GET", url, nil)
-	HandlingErrors(err1, "http.NewRequest")
-	res, err2 := http.DefaultClient.Do(req)
-	HandlingErrors(err2, "http.DefaultClient.Do")
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return err
+	}
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return err
+	}
 	// 关闭请求
 	defer res.Body.Close()
-	body, err3 := ioutil.ReadAll(res.Body)
-	HandlingErrors(err3, "http.DefaultClient.Do")
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
 	// 定义一个Threatbook结构体存储返回的数据
 	val_threat := Threatbook{}
 	if err := json.Unmarshal(body, &val_threat); err != nil {
-		fmt.Println("[\033[1;31m✘\033[0m] 反序列化存在错误", err)
-		os.Exit(1)
+		return err
 	}
 	if (val_threat.Data[IP].Is_malicious) && (val_threat.Response_code >= 0) {
 		fmt.Println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n[\033[0;38;5;214m!\033[0m] IP：", IP, "\n-----------------------------------------------------------------\n标签类别：", val_threat.Data[IP].Tags_classes, "\n请求状态：", response_code[val_threat.Response_code], "\nIP危害级别：", severity[val_threat.Data[IP].Severity], "\n恶意的类型：", val_threat.Data[IP].Judgments, "\n运营商：", val_threat.Data[IP].Basic.Carrier, "\n国家城市：", val_threat.Data[IP].Basic.Location, "\n可信度：", confidence_level[val_threat.Data[IP].Confidence_level], "\n情报的最近更新时间：", val_threat.Data[IP].Update_time, "\n+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 	} else if val_threat.Response_code < 0 {
 		fmt.Println("[\033[1;31m✘\033[0m] 请求状态：", response_code[val_threat.Response_code])
 	} else {
-		fmt.Println("[\033[1;32m✓\033[0m] " + IP + " 未出现异常！")
+		fmt.Println("[\033[1;32m✓\033[0m] " + IP + " 未出现异常")
 	}
+	return nil
 }
