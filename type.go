@@ -1,4 +1,3 @@
-// TBtype.go
 package main
 
 // 关于asn信息结构体
