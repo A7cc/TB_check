@@ -60,14 +60,14 @@ func main() {
 		// 增加一个goroutine标志
 		wg.Add(1)
 		// 判断用户是否使用自己的key
-		go func() {
+		go func(ipdata string) {
 			// 关闭goroutine
 			defer wg.Done()
 			err = Check_IP(ipdata, key)
 			if err != nil {
 				fmt.Println("[\033[1;31m✘\033[0m]", err)
 			}
-		}()
+		}(ipdata)
 	}
 	// 等待所有goroutine完成
 	wg.Wait()
