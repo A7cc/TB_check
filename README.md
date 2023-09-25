@@ -9,6 +9,13 @@
 
 # 贰 使用
 
+```bash
+# 编译
+go build -ldflags="-s -w" -trimpath -o TB_check_darwin_amd64 .
+go build -ldflags="-s -w" -trimpath -o TB_check_linux_amd64 .
+go build -ldflags="-s -w" -trimpath -o TB_check_windows_amd64.exe . 
+```
+
 ![image-20230811211644745](images/image-20230811211644745.png)
 
 ![image-20230811211551926](images/image-20230811211551926.png)
